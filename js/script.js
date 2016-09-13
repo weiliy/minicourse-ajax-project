@@ -11,9 +11,28 @@ function loadData() {
     $wikiElem.text("");
     $nytElem.text("");
 
-    // load streetview
+    var streetStr = $('#street').val();
+    var cityStr = $('#city').val();
+    var address = streetStr + ', ' + cityStr;
 
-    // YOUR CODE GOES HERE!
+    $greeting.text('So, you want to live at ' + address + '?');
+
+    var streetviewUrl = 'http://maps.googleapis.com/maps/api/streetview?size=600x300&location=' + address + '';
+    $body.append('<img class="bgimg" src="' + streetviewUrl + '">');
+    
+    // NT Times AJAX request
+    var nytimesUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?p=' + cityStr + '&sort=newest&api-key=917a1805c40d437f8dfe923c64b7c0a2';
+    $.getJSON(nytimesUrl, function(data){
+        $nytHeaderElem.text('New York Times Articles About ' + cityStr);
+        articles = data.response.docs;
+        for (var i = 0; i < articles.length; i++) {
+            var article = articles[i];
+            $nytElem.append('<li class="article">' +
+                '<a href="' + article.web_rul + '">' + article.headline.main + '</a>' +
+                '<p>' + article.snippet + '</p>' +
+            '</li>');
+        };
+    });
 
     return false;
 };
